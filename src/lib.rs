@@ -80,7 +80,7 @@ pub enum Mode {
 
 pub trait Mppt {
     /// Measured input voltage in volts.
-    fn input_voltage(&self) -> Float32Result {
+    fn input_voltage(&mut self) -> Float32Result {
         match self.receive_frame(Status::Input) {
             Ok(v) => Ok(f32::from_be_bytes(v[0..4].try_into().unwrap())),
             Err(e) => Err(e), // passthrough error
@@ -88,7 +88,7 @@ pub trait Mppt {
     }
 
     /// Measured input current in amps.
-    fn intput_current(&self) -> Float32Result {
+    fn intput_current(&mut self) -> Float32Result {
         match self.receive_frame(Status::Input) {
             Ok(v) => Ok(f32::from_be_bytes(v[4..4].try_into().unwrap())),
             Err(e) => Err(e), // passthrough error
@@ -96,7 +96,7 @@ pub trait Mppt {
     }
 
     /// Measured output voltage in volts.
-    fn output_voltage(&self) -> Float32Result {
+    fn output_voltage(&mut self) -> Float32Result {
         match self.receive_frame(Status::Output) {
             Ok(v) => Ok(f32::from_be_bytes(v[0..4].try_into().unwrap())),
             Err(e) => Err(e), // passthrough error
@@ -104,7 +104,7 @@ pub trait Mppt {
     }
 
     /// Measured output current in amps.
-    fn output_current(&self) -> Float32Result {
+    fn output_current(&mut self) -> Float32Result {
         match self.receive_frame(Status::Output) {
             Ok(v) => Ok(f32::from_be_bytes(v[4..4].try_into().unwrap())),
             Err(e) => Err(e), // passthrough error
@@ -112,7 +112,7 @@ pub trait Mppt {
     }
 
     /// Temperature measurement in celsius.
-    fn temperature(&self, sensor: TemperatureSensor) -> Float32Result {
+    fn temperature(&mut self, sensor: TemperatureSensor) -> Float32Result {
         match self.receive_frame(Status::Temperature) {
             Ok(v) => match sensor {
                 TemperatureSensor::Mosfet => Ok(f32::from_be_bytes(v[0..4].try_into().unwrap())),
@@ -125,7 +125,7 @@ pub trait Mppt {
     }
 
     /// Auxiliary power supply.
-    fn aux_power_voltage(&self, rail: VoltageRail) -> Float32Result {
+    fn aux_power_voltage(&mut self, rail: VoltageRail) -> Float32Result {
         match self.receive_frame(Status::AuxPower) {
             Ok(v) => match rail {
                 VoltageRail::_12V => Ok(f32::from_be_bytes(v[0..4].try_into().unwrap())),
@@ -136,7 +136,7 @@ pub trait Mppt {
     }
 
     /// Maximium output voltage in volts.
-    fn max_output_voltage(&self) -> Float32Result {
+    fn max_output_voltage(&mut self) -> Float32Result {
         match self.receive_frame(Status::Limits) {
             Ok(v) => Ok(f32::from_be_bytes(v[0..4].try_into().unwrap())),
             Err(e) => Err(e), // passthrough error
@@ -144,7 +144,7 @@ pub trait Mppt {
     }
 
     /// Maximum input current in amps.
-    fn max_input_current(&self) -> Float32Result {
+    fn max_input_current(&mut self) -> Float32Result {
         match self.receive_frame(Status::Limits) {
             Ok(v) => Ok(f32::from_be_bytes(v[4..4].try_into().unwrap())),
             Err(e) => Err(e), // passthrough error
@@ -152,7 +152,7 @@ pub trait Mppt {
     }
 
     /// Device RX error count.
-    fn rx_error_count(&self) -> Result<u8, &'static str> {
+    fn rx_error_count(&mut self) -> Result<u8, &'static str> {
         match self.receive_frame(Status::Status) {
             Ok(v) => Ok(v[0]),
             Err(e) => Err(e), // passthrough error
@@ -160,7 +160,7 @@ pub trait Mppt {
     }
 
     /// Device TX error count.
-    fn tx_error_count(&self) -> Result<u8, &'static str> {
+    fn tx_error_count(&mut self) -> Result<u8, &'static str> {
         match self.receive_frame(Status::Status) {
             Ok(v) => Ok(v[1]),
             Err(e) => Err(e), // passthrough error
@@ -168,7 +168,7 @@ pub trait Mppt {
     }
 
     /// Device TX overflow count.
-    fn tx_overflow_count(&self) -> Result<u8, &'static str> {
+    fn tx_overflow_count(&mut self) -> Result<u8, &'static str> {
         match self.receive_frame(Status::Status) {
             Ok(v) => Ok(v[2]),
             Err(e) => Err(e), // passthrough error
@@ -176,7 +176,7 @@ pub trait Mppt {
     }
 
     /// Error status flags.
-    fn error_flags(&self) -> Result<ErrorFlags, &'static str> {
+    fn error_flags(&mut self) -> Result<ErrorFlags, &'static str> {
         match self.receive_frame(Status::Status) {
             Ok(v) => Ok(ErrorFlags::from_bits_truncate(v[3])),
             Err(e) => Err(e), // passthrough error
@@ -184,7 +184,7 @@ pub trait Mppt {
     }
 
     /// Limit status flags.
-    fn limit_flags(&self) -> Result<LimitFlags, &'static str> {
+    fn limit_flags(&mut self) -> Result<LimitFlags, &'static str> {
         match self.receive_frame(Status::Status) {
             Ok(v) => Ok(LimitFlags::from_bits_truncate(v[4])),
             Err(e) => Err(e), // passthrough error
@@ -192,7 +192,7 @@ pub trait Mppt {
     }
 
     /// Current operating mode.
-    fn mode(&self) -> Result<Mode, &'static str> {
+    fn mode(&mut self) -> Result<Mode, &'static str> {
         match self.receive_frame(Status::Status) {
             Ok(v) => match v[5] {
                 0 => Ok(Mode::Standby),
@@ -206,7 +206,7 @@ pub trait Mppt {
     /// Test counter.
     ///
     /// Incrementing every device second.
-    fn test_counter(&self) -> Result<u8, &'static str> {
+    fn test_counter(&mut self) -> Result<u8, &'static str> {
         match self.receive_frame(Status::Status) {
             Ok(v) => Ok(v[7]),
             Err(e) => Err(e), // passthrough error
@@ -214,7 +214,7 @@ pub trait Mppt {
     }
 
     /// Output voltage (battery side of fuse).
-    fn power_connector_voltage(&self) -> Float32Result {
+    fn power_connector_voltage(&mut self) -> Float32Result {
         match self.receive_frame(Status::PowerConnector) {
             Ok(v) => Ok(f32::from_be_bytes(v[0..4].try_into().unwrap())),
             Err(e) => Err(e), // passthrough error
@@ -222,7 +222,7 @@ pub trait Mppt {
     }
 
     /// Power connector temperature in degrees celsius.
-    fn power_connector_temperature(&self) -> Float32Result {
+    fn power_connector_temperature(&mut self) -> Float32Result {
         match self.receive_frame(Status::PowerConnector) {
             Ok(v) => Ok(f32::from_be_bytes(v[4..4].try_into().unwrap())),
             Err(e) => Err(e), // passthrough error
@@ -230,23 +230,23 @@ pub trait Mppt {
     }
 
     /// Set operating mode.
-    fn set_mode(&self, mode: Mode) -> Confirmation {
+    fn set_mode(&mut self, mode: Mode) -> Confirmation {
         self.send_frame(Command::Mode, &[mode as u8])
     }
 
     /// Set the maximum output voltage in volts.
-    fn set_max_output_voltage(&self, voltage: f32) -> Confirmation {
+    fn set_max_output_voltage(&mut self, voltage: f32) -> Confirmation {
         self.send_frame(Command::MaxOutputVoltage, &voltage.to_be_bytes())
     }
 
     /// Set the maximum input current in amps.
-    fn set_max_input_current(&self, current: f32) -> Confirmation {
+    fn set_max_input_current(&mut self, current: f32) -> Confirmation {
         self.send_frame(Command::MaxInputCurrent, &current.to_be_bytes())
     }
 
     /// Send CAN bus frame with command.
-    fn send_frame(&self, command: Command, data: &[u8]) -> Confirmation;
+    fn send_frame(&mut self, command: Command, data: &[u8]) -> Confirmation;
 
     /// Receive CAN bus frame with status.
-    fn receive_frame(&self, status: Status) -> Result<&[u8], &'static str>;
+    fn receive_frame(&mut self, status: Status) -> Result<&[u8], &'static str>;
 }
