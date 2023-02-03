@@ -3,10 +3,10 @@
 use bitflags::bitflags;
 
 /// Default identifier with rotary switch in the 0 position.
-static DEFAULT_IDENTIFIER: u16 = 0x600;
+static DEFAULT_ID: u16 = 0x600;
 
 /// Offset added by each incement of the rotary switch.
-static IDENTIFIER_INCREMENT: u16 = 0x10;
+static ID_INCREMENT: u16 = 0x10;
 
 /// Status message.
 enum StatusMessage {
