@@ -31,6 +31,38 @@ fn setup() -> Dummy {
 }
 
 #[test]
+fn test_get_input_voltage() {
+    let mut m = setup();
+
+    m.buffer.push(0x00);
+    m.buffer.push(0x00);
+    m.buffer.push(0x00);
+    m.buffer.push(0x00);
+    m.buffer.push(0x00);
+    m.buffer.push(0x00);
+    m.buffer.push(0x00);
+    m.buffer.push(0x00);
+
+    assert_eq!(m.input_voltage().unwrap(), 0f32);
+}
+
+#[test]
+fn test_get_input_current() {
+    let mut m = setup();
+
+    m.buffer.push(0x00);
+    m.buffer.push(0x00);
+    m.buffer.push(0x00);
+    m.buffer.push(0x00);
+    m.buffer.push(0x00);
+    m.buffer.push(0x00);
+    m.buffer.push(0x00);
+    m.buffer.push(0x00);
+
+    assert_eq!(m.intput_current().unwrap(), 0f32);
+}
+
+#[test]
 fn test_set_mode() {
     let mut m = setup();
 
