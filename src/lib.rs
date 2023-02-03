@@ -68,8 +68,8 @@ bitflags! {
 
 /// Operating mode.
 enum Mode {
-    Standby,
-    On,
+    Standby = 0,
+    On = 1,
 }
 
 trait Mppt {
