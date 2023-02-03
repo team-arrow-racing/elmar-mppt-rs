@@ -32,7 +32,6 @@ pub type Confirmation = Result<(), &'static str>;
 /// Float32 result.
 pub type Float32Result = Result<f32, &'static str>;
 
-
 /// Temperature sensor
 pub enum TemperatureSensor {
     Mosfet,
@@ -116,10 +115,10 @@ pub trait Mppt {
     fn temperature(&self, sensor: TemperatureSensor) -> Float32Result {
         match self.receive_frame(Status::Temperature) {
             Ok(v) => match sensor {
-                TemperatureSensor::Mosfet =>
-                    Ok(f32::from_be_bytes(v[0..4].try_into().unwrap())),
-                    TemperatureSensor::Controller =>
-                    Ok(f32::from_be_bytes(v[4..4].try_into().unwrap())),
+                TemperatureSensor::Mosfet => Ok(f32::from_be_bytes(v[0..4].try_into().unwrap())),
+                TemperatureSensor::Controller => {
+                    Ok(f32::from_be_bytes(v[4..4].try_into().unwrap()))
+                }
             },
             Err(e) => Err(e), // passthrough error
         }
@@ -129,10 +128,8 @@ pub trait Mppt {
     fn aux_power_voltage(&self, rail: VoltageRail) -> Float32Result {
         match self.receive_frame(Status::AuxPower) {
             Ok(v) => match rail {
-                VoltageRail::_12V =>
-                    Ok(f32::from_be_bytes(v[0..4].try_into().unwrap())),
-                VoltageRail::_3V3 =>
-                    Ok(f32::from_be_bytes(v[4..4].try_into().unwrap())),
+                VoltageRail::_12V => Ok(f32::from_be_bytes(v[0..4].try_into().unwrap())),
+                VoltageRail::_3V3 => Ok(f32::from_be_bytes(v[4..4].try_into().unwrap())),
             },
             Err(e) => Err(e), // passthrough error
         }
@@ -251,5 +248,5 @@ pub trait Mppt {
     fn send_frame(&self, command: Command, data: &[u8]) -> Confirmation;
 
     /// Receive CAN bus frame with status.
-    fn receive_frame(&self, status: Status) -> Result<&[u8], &'static str>; 
+    fn receive_frame(&self, status: Status) -> Result<&[u8], &'static str>;
 }
