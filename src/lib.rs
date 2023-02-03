@@ -32,6 +32,13 @@ type Confirmation = Result<(), &'static str>;
 /// Float32 result.
 type Float32Result = Result<f32, &'static str>;
 
+
+/// Temperature sensor
+enum TemperatureSensor {
+    Mosfet,
+    Controller
+}
+
 /// Voltage rail.
 enum VoltageRail {
     _12V,
@@ -105,43 +112,125 @@ trait Mppt {
         }
     }
 
+    /// Temperature measurement in celsius.
+    fn temperature(&self, sensor: TemperatureSensor) -> Float32Result {
+        match self.receive_frame(Status::Temperature) {
+            Ok(v) => match sensor {
+                TemperatureSensor::Mosfet =>
+                    Ok(f32::from_be_bytes(v[0..4].try_into().unwrap())),
+                    TemperatureSensor::Controller =>
+                    Ok(f32::from_be_bytes(v[4..4].try_into().unwrap())),
+            },
+            Err(e) => Err(e), // passthrough error
+        }
+    }
+
     /// Auxiliary power supply.
-    fn aux_power_voltage(rail: VoltageRail) -> Float32Result;
+    fn aux_power_voltage(&self, rail: VoltageRail) -> Float32Result {
+        match self.receive_frame(Status::AuxPower) {
+            Ok(v) => match rail {
+                VoltageRail::_12V =>
+                    Ok(f32::from_be_bytes(v[0..4].try_into().unwrap())),
+                VoltageRail::_3V3 =>
+                    Ok(f32::from_be_bytes(v[4..4].try_into().unwrap())),
+            },
+            Err(e) => Err(e), // passthrough error
+        }
+    }
 
     /// Maximium output voltage in volts.
-    fn max_output_voltage() -> Float32Result;
+    fn max_output_voltage(&self) -> Float32Result {
+        match self.receive_frame(Status::Limits) {
+            Ok(v) => Ok(f32::from_be_bytes(v[0..4].try_into().unwrap())),
+            Err(e) => Err(e), // passthrough error
+        }
+    }
 
     /// Maximum input current in amps.
-    fn max_input_current() -> Float32Result;
+    fn max_input_current(&self) -> Float32Result {
+        match self.receive_frame(Status::Limits) {
+            Ok(v) => Ok(f32::from_be_bytes(v[4..4].try_into().unwrap())),
+            Err(e) => Err(e), // passthrough error
+        }
+    }
 
     /// Device RX error count.
-    fn rx_error_count() -> Result<u8, &'static str>;
+    fn rx_error_count(&self) -> Result<u8, &'static str> {
+        match self.receive_frame(Status::Status) {
+            Ok(v) => Ok(v[0]),
+            Err(e) => Err(e), // passthrough error
+        }
+    }
 
     /// Device TX error count.
-    fn tx_error_count() -> Result<u8, &'static str>;
+    fn tx_error_count(&self) -> Result<u8, &'static str> {
+        match self.receive_frame(Status::Status) {
+            Ok(v) => Ok(v[1]),
+            Err(e) => Err(e), // passthrough error
+        }
+    }
 
     /// Device TX overflow count.
-    fn tx_overflow_count() -> Result<u8, &'static str>;
+    fn tx_overflow_count(&self) -> Result<u8, &'static str> {
+        match self.receive_frame(Status::Status) {
+            Ok(v) => Ok(v[2]),
+            Err(e) => Err(e), // passthrough error
+        }
+    }
 
     /// Error status flags.
-    fn error_flags() -> Result<ErrorFlags, &'static str>;
+    fn error_flags(&self) -> Result<ErrorFlags, &'static str> {
+        match self.receive_frame(Status::Status) {
+            Ok(v) => Ok(ErrorFlags::from_bits_truncate(v[3])),
+            Err(e) => Err(e), // passthrough error
+        }
+    }
 
     /// Limit status flags.
-    fn limit_flags() -> Result<LimitFlags, &'static str>;
+    fn limit_flags(&self) -> Result<LimitFlags, &'static str> {
+        match self.receive_frame(Status::Status) {
+            Ok(v) => Ok(LimitFlags::from_bits_truncate(v[4])),
+            Err(e) => Err(e), // passthrough error
+        }
+    }
 
     /// Current operating mode.
-    fn mode() -> Result<Mode, &'static str>;
+    fn mode(&self) -> Result<Mode, &'static str> {
+        match self.receive_frame(Status::Status) {
+            Ok(v) => match v[5] {
+                0 => Ok(Mode::Standby),
+                1 => Ok(Mode::On),
+                _ => Err("mode value was invalid."),
+            },
+            Err(e) => Err(e), // passthrough error
+        }
+    }
 
     /// Test counter.
     ///
     /// Incrementing every device second.
-    fn test_counter() -> Result<u8, &'static str>;
+    fn test_counter(&self) -> Result<u8, &'static str> {
+        match self.receive_frame(Status::Status) {
+            Ok(v) => Ok(v[7]),
+            Err(e) => Err(e), // passthrough error
+        }
+    }
 
     /// Output voltage (battery side of fuse).
-    fn power_connector_voltage() -> Float32Result;
+    fn power_connector_voltage(&self) -> Float32Result {
+        match self.receive_frame(Status::PowerConnector) {
+            Ok(v) => Ok(f32::from_be_bytes(v[0..4].try_into().unwrap())),
+            Err(e) => Err(e), // passthrough error
+        }
+    }
 
     /// Power connector temperature in degrees celsius.
-    fn power_connector_temperature() -> Float32Result;
+    fn power_connector_temperature(&self) -> Float32Result {
+        match self.receive_frame(Status::PowerConnector) {
+            Ok(v) => Ok(f32::from_be_bytes(v[4..4].try_into().unwrap())),
+            Err(e) => Err(e), // passthrough error
+        }
+    }
 
     /// Set operating mode.
     fn set_mode(&self, mode: Mode) -> Confirmation {
