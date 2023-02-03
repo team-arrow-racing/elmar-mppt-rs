@@ -1,3 +1,6 @@
+[![crates.io](https://img.shields.io/crates/v/elmar-mppt.svg)](https://crates.io/crates/elmar-mppt)
+[![crates.io](https://img.shields.io/crates/d/elmar-mppt.svg)](https://crates.io/crates/elmar-mppt)
+
 # Elmar MPPT Driver
 
 Driver for Elmar MPPT devices.
