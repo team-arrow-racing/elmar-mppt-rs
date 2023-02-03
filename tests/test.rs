@@ -14,12 +14,16 @@ impl Dummy {
 
 impl Mppt for Dummy {
     fn send_frame(&mut self, command: Command, data: &[u8]) -> elmar_mppt::Confirmation {
+        let _ = command;
+
         self.buffer = Vec::from(data);
 
         Ok(())
     }
 
     fn receive_frame(&mut self, status: Status) -> Result<&[u8], &'static str> {
+        let _ = status;
+
         Ok(&self.buffer)
     }
 }
