@@ -91,7 +91,7 @@ pub trait Mppt {
     /// Measured input current in amps.
     fn intput_current(&mut self) -> Float32Result {
         match self.receive_frame(Status::Input) {
-            Ok(v) => Ok(f32::from_be_bytes(v[4..4].try_into().unwrap())),
+            Ok(v) => Ok(f32::from_be_bytes(v[4..8].try_into().unwrap())),
             Err(e) => Err(e), // passthrough error
         }
     }
@@ -107,7 +107,7 @@ pub trait Mppt {
     /// Measured output current in amps.
     fn output_current(&mut self) -> Float32Result {
         match self.receive_frame(Status::Output) {
-            Ok(v) => Ok(f32::from_be_bytes(v[4..4].try_into().unwrap())),
+            Ok(v) => Ok(f32::from_be_bytes(v[4..8].try_into().unwrap())),
             Err(e) => Err(e), // passthrough error
         }
     }
@@ -116,9 +116,11 @@ pub trait Mppt {
     fn temperature(&mut self, sensor: TemperatureSensor) -> Float32Result {
         match self.receive_frame(Status::Temperature) {
             Ok(v) => match sensor {
-                TemperatureSensor::Mosfet => Ok(f32::from_be_bytes(v[0..4].try_into().unwrap())),
+                TemperatureSensor::Mosfet => {
+                    Ok(f32::from_be_bytes(v[0..4].try_into().unwrap()))
+                },
                 TemperatureSensor::Controller => {
-                    Ok(f32::from_be_bytes(v[4..4].try_into().unwrap()))
+                    Ok(f32::from_be_bytes(v[4..8].try_into().unwrap()))
                 }
             },
             Err(e) => Err(e), // passthrough error
@@ -130,7 +132,7 @@ pub trait Mppt {
         match self.receive_frame(Status::AuxPower) {
             Ok(v) => match rail {
                 VoltageRail::_12V => Ok(f32::from_be_bytes(v[0..4].try_into().unwrap())),
-                VoltageRail::_3V3 => Ok(f32::from_be_bytes(v[4..4].try_into().unwrap())),
+                VoltageRail::_3V3 => Ok(f32::from_be_bytes(v[4..8].try_into().unwrap())),
             },
             Err(e) => Err(e), // passthrough error
         }
@@ -147,7 +149,7 @@ pub trait Mppt {
     /// Maximum input current in amps.
     fn max_input_current(&mut self) -> Float32Result {
         match self.receive_frame(Status::Limits) {
-            Ok(v) => Ok(f32::from_be_bytes(v[4..4].try_into().unwrap())),
+            Ok(v) => Ok(f32::from_be_bytes(v[4..8].try_into().unwrap())),
             Err(e) => Err(e), // passthrough error
         }
     }
@@ -225,7 +227,7 @@ pub trait Mppt {
     /// Power connector temperature in degrees celsius.
     fn power_connector_temperature(&mut self) -> Float32Result {
         match self.receive_frame(Status::PowerConnector) {
-            Ok(v) => Ok(f32::from_be_bytes(v[4..4].try_into().unwrap())),
+            Ok(v) => Ok(f32::from_be_bytes(v[4..8].try_into().unwrap())),
             Err(e) => Err(e), // passthrough error
         }
     }
