@@ -9,7 +9,7 @@ static DEFAULT_ID: u16 = 0x600;
 static ID_INCREMENT: u16 = 0x10;
 
 /// Status message.
-enum Status {
+pub enum Status {
     Input = 0x00,
     Output = 0x01,
     Temperature = 0x02,
@@ -20,34 +20,34 @@ enum Status {
 }
 
 /// Command message.
-enum Command {
+pub enum Command {
     Mode = 0x08,
     MaxOutputVoltage = 0x0A,
     MaxInputCurrent = 0x0B,
 }
 
 /// Empty confirmation result.
-type Confirmation = Result<(), &'static str>;
+pub type Confirmation = Result<(), &'static str>;
 
 /// Float32 result.
-type Float32Result = Result<f32, &'static str>;
+pub type Float32Result = Result<f32, &'static str>;
 
 
 /// Temperature sensor
-enum TemperatureSensor {
+pub enum TemperatureSensor {
     Mosfet,
-    Controller
+    Controller,
 }
 
 /// Voltage rail.
-enum VoltageRail {
+pub enum VoltageRail {
     _12V,
     _3V3,
 }
 
 bitflags! {
     /// Error flags
-    struct ErrorFlags: u8 {
+    pub struct ErrorFlags: u8 {
         const HW_OVERVOLTAGE    = 1 << 0;
         const HW_OVERCURRENT    = 1 << 1;
         // const RESERVED       = 1 << 2;
@@ -61,7 +61,7 @@ bitflags! {
 
 bitflags! {
     /// Limit flags
-    struct LimitFlags: u8 {
+    pub struct LimitFlags: u8 {
         const GLOBAL_MPPT           = 1 << 0;
         const LOCAL_MPPT            = 1 << 1;
         const DUTY_CYCLE_MAX        = 1 << 2;
@@ -74,12 +74,12 @@ bitflags! {
 }
 
 /// Operating mode.
-enum Mode {
+pub enum Mode {
     Standby = 0,
     On = 1,
 }
 
-trait Mppt {
+pub trait Mppt {
     /// Measured input voltage in volts.
     fn input_voltage(&self) -> Float32Result {
         match self.receive_frame(Status::Input) {
