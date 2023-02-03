@@ -1,5 +1,7 @@
 # Elmar MPPT Driver
 
+Driver for Elmar MPPT devices.
+
 ## Usage
 
 Add an entry to your `Cargo.toml`:
