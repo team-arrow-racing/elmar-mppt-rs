@@ -73,6 +73,7 @@ bitflags! {
 }
 
 /// Operating mode.
+#[derive(PartialEq)]
 pub enum Mode {
     Standby = 0,
     On = 1,
