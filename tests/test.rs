@@ -7,7 +7,7 @@ struct Dummy {
 impl Dummy {
     fn new() -> Self {
         Dummy {
-            buffer: Vec::new(),
+            buffer: Vec::with_capacity(8),
         }
     }
 }
