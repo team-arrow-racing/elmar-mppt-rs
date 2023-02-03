@@ -125,11 +125,20 @@ trait Mppt {
     fn power_connector_temperature() -> Float32Result;
 
     /// Set operating mode.
-    fn set_mode(mode: Mode) -> Confirmation;
+    fn set_mode(&self, mode: Mode) -> Confirmation {
+        self.send_frame(Command::Mode, &[mode as u8])
+    }
 
     /// Set the maximum output voltage in volts.
-    fn set_max_output_voltage(voltage: f32) -> Confirmation;
+    fn set_max_output_voltage(&self, voltage: f32) -> Confirmation {
+        self.send_frame(Command::MaxOutputVoltage, &voltage.to_be_bytes())
+    }
 
     /// Set the maximum input current in amps.
-    fn set_max_input_current(current: f32) -> Confirmation;
+    fn set_max_input_current(&self, current: f32) -> Confirmation {
+        self.send_frame(Command::MaxInputCurrent, &current.to_be_bytes())
+    }
+
+    /// Send CAN bus frame with command.
+    fn send_frame(&self, command: Command, data: &[u8]) -> Confirmation;
 }
