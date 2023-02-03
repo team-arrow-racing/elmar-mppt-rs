@@ -73,18 +73,37 @@ enum Mode {
 }
 
 trait Mppt {
-
     /// Measured input voltage in volts.
-    fn input_voltage() -> Float32Result;
+    fn input_voltage(&self) -> Float32Result {
+        match self.receive_frame(Status::Input) {
+            Ok(v) => Ok(f32::from_be_bytes(v[0..4].try_into().unwrap())),
+            Err(e) => Err(e), // passthrough error
+        }
+    }
 
     /// Measured input current in amps.
-    fn intput_current() -> Float32Result;
+    fn intput_current(&self) -> Float32Result {
+        match self.receive_frame(Status::Input) {
+            Ok(v) => Ok(f32::from_be_bytes(v[4..4].try_into().unwrap())),
+            Err(e) => Err(e), // passthrough error
+        }
+    }
 
     /// Measured output voltage in volts.
-    fn output_voltage() -> Float32Result;
+    fn output_voltage(&self) -> Float32Result {
+        match self.receive_frame(Status::Output) {
+            Ok(v) => Ok(f32::from_be_bytes(v[0..4].try_into().unwrap())),
+            Err(e) => Err(e), // passthrough error
+        }
+    }
 
     /// Measured output current in amps.
-    fn output_current() -> Float32Result;
+    fn output_current(&self) -> Float32Result {
+        match self.receive_frame(Status::Output) {
+            Ok(v) => Ok(f32::from_be_bytes(v[4..4].try_into().unwrap())),
+            Err(e) => Err(e), // passthrough error
+        }
+    }
 
     /// Auxiliary power supply.
     fn aux_power_voltage(rail: VoltageRail) -> Float32Result;
@@ -141,4 +160,7 @@ trait Mppt {
 
     /// Send CAN bus frame with command.
     fn send_frame(&self, command: Command, data: &[u8]) -> Confirmation;
+
+    /// Receive CAN bus frame with status.
+    fn receive_frame(&self, status: Status) -> Result<&[u8], &'static str>; 
 }
