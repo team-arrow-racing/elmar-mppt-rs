@@ -9,7 +9,7 @@ static DEFAULT_ID: u16 = 0x600;
 static ID_INCREMENT: u16 = 0x10;
 
 /// Status message.
-enum StatusMessage {
+enum Status {
     Input = 0x00,
     Output = 0x01,
     Temperature = 0x02,
@@ -20,7 +20,7 @@ enum StatusMessage {
 }
 
 /// Command message.
-enum CommandMessage {
+enum Command {
     Mode = 0x08,
     MaxOutputVoltage = 0x0A,
     MaxInputCurrent = 0x0B,
