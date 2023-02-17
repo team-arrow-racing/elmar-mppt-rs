@@ -1,3 +1,8 @@
+//! # Elmar MPPT Driver 
+//! 
+//! This a platform agnostic driver for the Elmar MPPT solar array power
+//! converter.
+
 #![no_std]
 #![allow(dead_code)]
 
