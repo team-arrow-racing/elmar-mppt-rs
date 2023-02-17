@@ -1,5 +1,5 @@
-//! # Elmar MPPT Driver 
-//! 
+//! # Elmar MPPT Driver
+//!
 //! This a platform agnostic driver for the Elmar MPPT solar array power
 //! converter.
 
@@ -85,6 +85,10 @@ pub enum Mode {
     On = 1,
 }
 
+struct Device {
+    base_id: u16,
+}
+
 pub trait Mppt {
     /// Measured input voltage in volts.
     fn input_voltage(&mut self) -> Float32Result {
@@ -122,9 +126,7 @@ pub trait Mppt {
     fn temperature(&mut self, sensor: TemperatureSensor) -> Float32Result {
         match self.receive_frame(Status::Temperature) {
             Ok(v) => match sensor {
-                TemperatureSensor::Mosfet => {
-                    Ok(f32::from_be_bytes(v[0..4].try_into().unwrap()))
-                },
+                TemperatureSensor::Mosfet => Ok(f32::from_be_bytes(v[0..4].try_into().unwrap())),
                 TemperatureSensor::Controller => {
                     Ok(f32::from_be_bytes(v[4..8].try_into().unwrap()))
                 }
