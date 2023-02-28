@@ -4,7 +4,6 @@
 //! converter.
 
 #![no_std]
-//#![allow(dead_code)]
 
 use bitflags::bitflags;
 use bxcan::{Frame, Id, StandardId};
