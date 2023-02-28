@@ -13,7 +13,7 @@ Add an entry to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-elmar-mppt = "0.1.0"
+elmar-mppt = "0.1.1"
 ```
 
 ## References
