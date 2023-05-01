@@ -19,7 +19,3 @@ elmar-mppt = "0.1.1"
 ## References
 
 - [Elmar MPPT User Manual](https://www.prohelion.com/wp-content/uploads/2021/02/Elmar_Solar_MPPT_Best_2021.pdf)
-
-## License
-
-Licensed under [Mozilla Public License Version 2.0](https://www.mozilla.org/en-US/MPL/2.0/).
