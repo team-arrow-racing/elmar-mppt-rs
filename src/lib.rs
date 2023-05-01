@@ -97,7 +97,7 @@ pub struct Status {
 #[derive(Clone, Copy)]
 pub struct Mppt {
     /// Base identifier used by the MPPT.
-    /// 
+    ///
     /// See the manual for configuring the identifier.
     base_id: u16,
 
@@ -116,7 +116,7 @@ impl Mppt {
     }
 
     /// Process an incoming message and update the device status as needed.
-    /// 
+    ///
     /// If the message identifier does not match the device, this returns `Ok`.
     pub fn receive(&mut self, frame: &Frame) -> Result<(), &'static str> {
         match frame.id() {
