@@ -75,7 +75,7 @@ impl Mppt {
     pub fn receive(&mut self, frame: &Frame) -> Result<(), &'static str> {
         match frame.id() {
             Id::Standard(id) => {
-                if frame.is_data_frame() == false {
+                if !frame.is_data_frame() {
                     return Err("frame is not a data frame");
                 }
 
@@ -131,7 +131,7 @@ impl Mppt {
             }
         }
 
-        return Ok(());
+        Ok(())
     }
 
     /// Get the current status of the MPPT.
