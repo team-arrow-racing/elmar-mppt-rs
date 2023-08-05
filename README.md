@@ -5,7 +5,7 @@
 
 Driver for Elmar MPPT devices.
 
-Curerntly this crate only supports STM32 devices using the `bxcan` CAN Bus driver.
+Currently this crate only supports STM32 devices using the `bxcan` CAN Bus driver.
 
 ## Usage
 
